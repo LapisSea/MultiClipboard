@@ -7,7 +7,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -88,11 +87,9 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 					return;
 				}
 				Object clip=null;
-				if(t.isDataFlavorSupported(DataFlavor.stringFlavor))clip=t.getTransferData(DataFlavor.stringFlavor);
-				else if(t.isDataFlavorSupported(DataFlavor.imageFlavor))clip=t.getTransferData(DataFlavor.imageFlavor);
-				else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
-					clip=t.getTransferData(DataFlavor.javaFileListFlavor);
-				}
+				if(t.isDataFlavorSupported(DataFlavor.imageFlavor))clip=t.getTransferData(DataFlavor.imageFlavor);
+				else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor))clip=t.getTransferData(DataFlavor.javaFileListFlavor);
+				else if(t.isDataFlavorSupported(DataFlavor.stringFlavor))clip=t.getTransferData(DataFlavor.stringFlavor);
 				else if(t.isDataFlavorSupported(DataFlavor.plainTextFlavor)){
 					BufferedReader reader=new BufferedReader(DataFlavor.plainTextFlavor.getReaderForText(t));
 					StringBuilder b=new StringBuilder();
@@ -104,12 +101,8 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 					clip=b.toString();
 				}
 				if(clip!=null){
-					try{
-						slots.get(selectedSlot).newPaste(new Pair<Object,Transferable>(clip, t));
-						if(gui!=null)gui.markDirty();
-					}catch(Exception e){
-						e.printStackTrace();
-					}
+					slots.get(selectedSlot).newPaste(new Pair<Object,Transferable>(clip, t));
+					if(gui!=null)gui.markDirty();
 				}
 			}
 		};
@@ -122,20 +115,12 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 		new GlobalKeyboardHook().addKeyListener(this);
 		new GlobalMouseHook().addMouseListener(this);
 		
-		File exitChecker=new File("Delete this to kill process");
-		try{
-			exitChecker.createNewFile();
-			exitChecker.deleteOnExit();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		while(true){
-			if(!exitChecker.exists())System.exit(0);
-		}
+		new TrayMenu();
 	}
 	
 	private void createConfig()throws Exception{
-		File file=new File("Multi_copy_config.json");
+		new File("data").mkdir();
+		File file=new File("data/Multi_copy_config.json");
 		file.createNewFile();
 		
 		JSONObject config=new JSONObject();
@@ -156,7 +141,7 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	}
 	
 	private void readConfig()throws Exception{
-		JSONObject config=new JSONObject(new String(Files.readAllBytes(new File("Multi_copy_config.json").toPath())));
+		JSONObject config=new JSONObject(new String(Files.readAllBytes(new File("data/Multi_copy_config.json").toPath())));
 		activationKey=config.getString("activation-key");
 		buttonNumber=config.getInt("button-number");
 		

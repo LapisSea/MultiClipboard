@@ -49,7 +49,7 @@ public class StringRenderer implements Renderable{
 		
 		for(int j=(int)Math.min(i+Math.ceil(height/(float)gui.handler.font.getSize())+1, lines.size());i<j;i++){
 			String l=lines.get(i);
-			g.drawString(l, 5, 15);
+			if(l!=null)g.drawString(l, 5, 15);
 			g.translate(0, gui.handler.font.getSize());
 		}
 	}

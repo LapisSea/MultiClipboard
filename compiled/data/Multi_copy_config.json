@@ -1,5 +1,5 @@
 {
-    "activation-key": "Y+Ctrl+Shift",
+    "activation-key": "X+Ctrl+Shift",
     "always-on-top": true,
     "button-number": 3,
     "font": {
@@ -7,5 +7,5 @@
         "size": 14
     },
     "scroll-time (ms)": 1000,
-    "switch-mode": true
+    "switch-mode": false
 }

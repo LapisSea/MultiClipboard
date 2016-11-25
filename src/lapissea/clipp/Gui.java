@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -30,13 +31,18 @@ public class Gui extends JFrame{
 	private List<Button> buttons=new ArrayList<>();
 	private int selectedId=-1,lastSelectedId=-2;
 	
+	public static final Image icon=Toolkit.getDefaultToolkit().getImage("data/Icon.png");
+	
 	public Gui(Handler handler){
 		this.handler=handler;
-
+		
 		for(int i=0;i<handler.buttonNumber;i++)buttons.add(new Button(this,handler.slots.get(buttons.size()),buttons.size()));
 		
 		if(!handler.switchMode)setType(Type.UTILITY);
-		else setTitle("Lapis Multi-clipboard");
+		else{
+			setTitle("Lapis Multi-clipboard");
+			setIconImage(icon);
+		}
 		setUndecorated(true);
 		setSize(200, 80*buttons.size());
 		setAlwaysOnTop(handler.alwaysOnTop);
@@ -159,6 +165,8 @@ public class Gui extends JFrame{
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		g.setFont(handler.font);
+		
+		
 		double d=(openningTransition-System.currentTimeMillis())/200;
 		if(d<=0)d=0;
 		else markDirty();
