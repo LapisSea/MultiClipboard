@@ -1,0 +1,10 @@
+Error in: Global Keyboard Hook Dispatcher
+==========================================
+
+java.lang.NullPointerException
+	at lapissea.clipp.Handler.keyReleased(Handler.java:179)
+	at lc.kra.system.keyboard.GlobalKeyboardHook.keyReleased(GlobalKeyboardHook.java:132)
+	at lc.kra.system.keyboard.GlobalKeyboardHook.access$200(GlobalKeyboardHook.java:45)
+	at lc.kra.system.keyboard.GlobalKeyboardHook$1.run(GlobalKeyboardHook.java:67)
+
+==========================================
