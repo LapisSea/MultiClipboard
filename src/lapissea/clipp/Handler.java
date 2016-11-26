@@ -2,6 +2,7 @@ package lapissea.clipp;
 
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -26,7 +27,7 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 
 	private Gui gui;
 	private Point mousePos=new Point(0, 0);
-	private String lastPress,activationKey="X+Ctrl+Shift";
+	public String lastPress,activationKey="X+Ctrl+Shift";
 	public int selectedSlot=0;
 	public List<Slot> slots=new ArrayList<>();
 	public ClipBoardListener clipBoardListener;
@@ -63,13 +64,12 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	
 	public Handler(){
 
-		File config=new File("Multi_copy_config.json");
 		try{
-			if(!config.exists()||!config.isFile())createConfig();
 			try{
 				readConfig();
 			}catch(Exception e){
-				createConfig();
+				e.printStackTrace();
+				writeConfig();
 				readConfig();
 			}
 		}catch(Exception e){
@@ -80,6 +80,7 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 		
 		
 		clipBoardListener=new ClipBoardListener(){
+			@SuppressWarnings("deprecation")
 			@Override
 			protected void onChange(Clipboard c, Transferable t)throws Exception{
 				if(ignoreNext){
@@ -114,11 +115,10 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 		
 		new GlobalKeyboardHook().addKeyListener(this);
 		new GlobalMouseHook().addMouseListener(this);
-		
-		new TrayMenu();
+		new TrayMenu(this);
 	}
 	
-	private void createConfig()throws Exception{
+	public void writeConfig()throws Exception{
 		new File("data").mkdir();
 		File file=new File("data/Multi_copy_config.json");
 		file.createNewFile();
@@ -134,8 +134,8 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 		}config.put("font", font);
 
 		config.put("scroll-time (ms)", 1000);
-		config.put("switch-mode", false);
-		config.put("always-on-top", true);
+		config.put("switch-mode", switchMode);
+		config.put("always-on-top", alwaysOnTop);
 		
 		Files.write(file.toPath(), config.toString(4).getBytes());
 	}
@@ -192,7 +192,15 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 			gui.close();
 		}
 	}
-
+	
+	public void paste(){
+		Pair<Object,Transferable> obj=slots.get(selectedSlot).getActive();
+		if(obj!=null){
+			ignoreNext=true;
+			if(obj!=null)Toolkit.getDefaultToolkit().getSystemClipboard().setContents(obj.getValue(), (a,b)->{});
+		}
+	}
+	
 	@Override
 	public void mousePressed(GlobalMouseEvent event){
 		updatePos(event);

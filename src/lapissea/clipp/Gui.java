@@ -9,7 +9,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -19,8 +18,6 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import com.sun.awt.AWTUtilities;
-
-import javafx.util.Pair;
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame{
@@ -82,9 +79,7 @@ public class Gui extends JFrame{
 					handler.selectedSlot=selectedId;
 					updateButtons();
 					markDirty();
-					Pair<Object,Transferable> obj=handler.slots.get(selectedId).getActive();
-					handler.ignoreNext=obj!=null;
-					if(obj!=null)Toolkit.getDefaultToolkit().getSystemClipboard().setContents(obj.getValue(), (a,b)->{});
+					handler.paste();
 				}
 			}
 			@Override
@@ -99,10 +94,7 @@ public class Gui extends JFrame{
 				handler.selectedSlot=selectedId;
 				updateButtons();
 				markDirty();
-				
-				Pair<Object,Transferable> obj=handler.slots.get(selectedId).getActive();
-				handler.ignoreNext=obj!=null;
-				if(obj!=null)Toolkit.getDefaultToolkit().getSystemClipboard().setContents(obj.getValue(), (a,b)->{});
+				handler.paste();
 			}
 		};
 		

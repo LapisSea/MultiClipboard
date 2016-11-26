@@ -13,6 +13,7 @@ import lapissea.clipp.Handler;
 
 public class Main{
 	
+	@SuppressWarnings("resource")
 	public static void main(String[] args){
 		try{
 			File f=new File("MultiClip.lock");

@@ -1,0 +1,15 @@
+Error in: main
+==========================================
+
+java.lang.ClassCastException: java.lang.Float cannot be cast to java.lang.Integer
+	at lapissea.clipp.TrayMenu.lambda$2(TrayMenu.java:133)
+	at javax.swing.JSpinner.fireStateChanged(JSpinner.java:458)
+	at javax.swing.JSpinner$ModelListener.stateChanged(JSpinner.java:386)
+	at javax.swing.AbstractSpinnerModel.fireStateChanged(AbstractSpinnerModel.java:119)
+	at javax.swing.SpinnerNumberModel.setValue(SpinnerNumberModel.java:447)
+	at javax.swing.JSpinner.setValue(JSpinner.java:354)
+	at lapissea.clipp.TrayMenu.<init>(TrayMenu.java:134)
+	at lapissea.clipp.Handler.<init>(Handler.java:118)
+	at lapissea.main.Main.main(Main.java:73)
+
+==========================================

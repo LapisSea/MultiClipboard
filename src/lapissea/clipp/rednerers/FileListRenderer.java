@@ -64,7 +64,7 @@ public class FileListRenderer implements Renderable{
 		g.translate(5, 0);
 		if(fileIcon!=null)g.drawImage(fileIcon, 0, 0, null);
 		String path=file.getAbsolutePath();
-		int lines=64/gui.handler.font.getSize(),linesH=lines*gui.handler.font.getSize();
+		int lines=64/gui.handler.font.getSize();
 		
 		int aviablePLine=(int)Math.floor((width-64-13F)/g.getFontMetrics().charWidth('a'));
 		
