@@ -1,0 +1,38 @@
+Error in: AWT-EventQueue-0
+==========================================
+
+java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.Double
+	at lapissea.clipp.TrayMenu.lambda$1(TrayMenu.java:119)
+	at javax.swing.JSpinner.fireStateChanged(JSpinner.java:458)
+	at javax.swing.JSpinner$ModelListener.stateChanged(JSpinner.java:386)
+	at javax.swing.AbstractSpinnerModel.fireStateChanged(AbstractSpinnerModel.java:119)
+	at javax.swing.SpinnerNumberModel.setValue(SpinnerNumberModel.java:447)
+	at javax.swing.JSpinner.setValue(JSpinner.java:354)
+	at javax.swing.JSpinner$DefaultEditor.propertyChange(JSpinner.java:752)
+	at java.beans.PropertyChangeSupport.fire(PropertyChangeSupport.java:335)
+	at java.beans.PropertyChangeSupport.firePropertyChange(PropertyChangeSupport.java:327)
+	at java.beans.PropertyChangeSupport.firePropertyChange(PropertyChangeSupport.java:263)
+	at java.awt.Component.firePropertyChange(Component.java:8428)
+	at javax.swing.JFormattedTextField.setValue(JFormattedTextField.java:798)
+	at javax.swing.JFormattedTextField.commitEdit(JFormattedTextField.java:529)
+	at javax.swing.JSpinner$DefaultEditor.commitEdit(JSpinner.java:865)
+	at javax.swing.JSpinner.commitEdit(JSpinner.java:551)
+	at javax.swing.plaf.basic.BasicSpinnerUI$ArrowButtonHandler.actionPerformed(BasicSpinnerUI.java:646)
+	at javax.swing.Timer.fireActionPerformed(Timer.java:313)
+	at javax.swing.Timer$DoPostEvent.run(Timer.java:245)
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:311)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:756)
+	at java.awt.EventQueue.access$500(EventQueue.java:97)
+	at java.awt.EventQueue$3.run(EventQueue.java:709)
+	at java.awt.EventQueue$3.run(EventQueue.java:703)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:726)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:201)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:116)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:105)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
+
+==========================================

@@ -2,38 +2,30 @@ package lapissea.clipp;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.FlavorEvent;
+import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.Transferable;
 
-public abstract class ClipBoardListener extends Thread implements ClipboardOwner{
+public abstract class ClipBoardListener implements FlavorListener{
 	
 	private static final Clipboard sysClip=Toolkit.getDefaultToolkit().getSystemClipboard();
 	
 	
+	public ClipBoardListener(){
+		sysClip.addFlavorListener(this);
+	}
 	@Override
-	public void run(){
-		lostOwnership(sysClip,sysClip.getContents(this));
+	public void flavorsChanged(FlavorEvent e){
+		call();
 	}
 	
-	@Override
-	public void lostOwnership(Clipboard c, Transferable t){
-		boolean notDone=true;
-		while(notDone){
-			try{
-				ClipBoardListener.sleep(10);
-				Transferable contents=sysClip.getContents(this);
-				onChange(c,contents);
-				takeOwnership(contents);
-				notDone=false;
-			}catch(Exception ex){
-				System.out.println(ex);
-			}
+	public void call(){
+		try{
+			onChange(sysClip.getContents(this));
+		}catch(Exception e1){
+			System.out.println(e1);
 		}
 	}
 	
-	private void takeOwnership(Transferable t){
-		sysClip.setContents(t, this);
-	}
-	
-	protected abstract void onChange(Clipboard c, Transferable t)throws Exception;
+	protected abstract void onChange(Transferable t)throws Exception;
 }

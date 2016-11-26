@@ -66,15 +66,14 @@ public class Gui extends JFrame{
 			
 			@Override
 			public void mouseExited(MouseEvent e){
-				if(selectedId!=-1){
-					selectedId=-1;
-					updateButtons();
-					markDirty();
-				}
+				selectedId=-1;
+				updateButtons();
+				markDirty();
 			}
 			
 			@Override
 			public void mouseClicked(MouseEvent e){
+				mouseMoved(e);
 				if(selectedId!=-1){
 					handler.selectedSlot=selectedId;
 					updateButtons();

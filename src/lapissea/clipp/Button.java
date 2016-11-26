@@ -23,7 +23,7 @@ public class Button{
 	
 	@SuppressWarnings("unchecked")
 	private final Runnable updateRenderer=()->{
-		Object obj=slot.getActive()==null?null:slot.getActive().getKey();
+		Object obj=slot.getActive()==null?null:slot.getActive();
 		
 		if(obj instanceof String) renderer=new StringRenderer(this.gui, (String)obj);
 		else if(obj instanceof BufferedImage) renderer=new BufferedImageRenderer(this.gui, (BufferedImage)obj);

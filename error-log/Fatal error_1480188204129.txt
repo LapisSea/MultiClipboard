@@ -1,0 +1,26 @@
+Error in: Thread-2
+==========================================
+
+java.lang.NullPointerException
+	at lapissea.clipp.rednerers.BufferedImageRenderer.render(BufferedImageRenderer.java:28)
+	at lapissea.clipp.Button.draw(Button.java:62)
+	at lapissea.clipp.Gui.lambda$0(Gui.java:179)
+	at java.util.ArrayList.forEach(ArrayList.java:1249)
+	at lapissea.clipp.Gui.paint(Gui.java:177)
+	at sun.awt.windows.WComponentPeer.paint(WComponentPeer.java:240)
+	at sun.awt.windows.WCanvasPeer.paint(WCanvasPeer.java:82)
+	at sun.awt.windows.WPanelPeer.paint(WPanelPeer.java:38)
+	at sun.awt.windows.WWindowPeer.paint(WWindowPeer.java:42)
+	at java.awt.GraphicsCallback$PeerPaintCallback.run(GraphicsCallback.java:87)
+	at sun.awt.SunGraphicsCallback.runOneComponent(SunGraphicsCallback.java:79)
+	at java.awt.Component.paintAll(Component.java:3269)
+	at sun.awt.windows.TranslucentWindowPainter.updateWindow(TranslucentWindowPainter.java:138)
+	at sun.awt.windows.WWindowPeer.updateWindow(WWindowPeer.java:763)
+	at sun.awt.windows.WWindowPeer.setOpacity(WWindowPeer.java:681)
+	at java.awt.Window.setOpacity(Window.java:3632)
+	at java.awt.Frame.setOpacity(Frame.java:962)
+	at lapissea.clipp.Gui.render(Gui.java:189)
+	at lapissea.clipp.Handler$1.run(Handler.java:60)
+	at java.lang.Thread.run(Thread.java:745)
+
+==========================================

@@ -6,12 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
@@ -36,24 +32,7 @@ import javax.swing.border.TitledBorder;
 public class TrayMenu extends JFrame{
 	
 	
-	public TrayMenu(Handler handler){
-		if(!SystemTray.isSupported()) throw new IllegalStateException("Your pc does not support tray icons!");
-		
-		TrayIcon trayIcon=new TrayIcon(Toolkit.getDefaultToolkit().getImage("data/Icon2.png"), "Lapis Multi-clipboard");
-		SystemTray tray=SystemTray.getSystemTray();
-		try{
-			trayIcon.addMouseListener(new MouseAdapter(){
-				
-				@Override
-				public void mouseClicked(MouseEvent e){
-					trayClicked(e);
-				}
-			});
-			tray.add(trayIcon);
-		}catch(Exception e){
-			throw new RuntimeException(e);
-		}
-		
+	public TrayMenu(Handler handler, TrayIconHandler iconHandler){
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLayout(new FlowLayout());
 		setSize(445, 374);
@@ -100,6 +79,10 @@ public class TrayMenu extends JFrame{
 			public void keyPressed(KeyEvent e){
 				handler.activationKey=activationKey.getText();
 			}
+			@Override
+			public void keyReleased(KeyEvent e){
+				handler.activationKey=activationKey.getText();
+			}
 		});
 		activationKey.setText(handler.activationKey);
 		
@@ -113,7 +96,7 @@ public class TrayMenu extends JFrame{
 		
 		scrollTimWrap.add(new JLabel("Scroll time (ms)"));
 		
-		JSpinner scrollTim=new JSpinner();
+		JSpinner scrollTim=new JSpinner(new SpinnerNumberModel(1D, 1, 10000, 1));
 		scrollTimWrap.add(scrollTim);
 		
 		scrollTim.addChangeListener(e->handler.scrollTime=(double)scrollTim.getValue());
@@ -128,9 +111,9 @@ public class TrayMenu extends JFrame{
 		
 		fontSizeWrap.add(new JLabel("Font size"));
 		
-		JSpinner fontSize=new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+		JSpinner fontSize=new JSpinner(new SpinnerNumberModel(1, 1, 50, 1));
 		fontSizeWrap.add(fontSize);
-		fontSize.addChangeListener(e->handler.font=handler.font.deriveFont((int)fontSize.getValue()));
+		fontSize.addChangeListener(e->handler.font=handler.font.deriveFont(handler.font.isBold()?Font.BOLD:Font.PLAIN, (int)fontSize.getValue()));
 		fontSize.setValue(handler.font.getSize());
 		
 		JToggleButton boldFont=new JToggleButton("Bold font");
@@ -172,7 +155,7 @@ public class TrayMenu extends JFrame{
 		JButton kill=new JButton("Shut down Lapis-multi-clipboard");
 		panel_3.add(kill);
 		kill.addActionListener(e->{
-			tray.remove(trayIcon);
+			iconHandler.kill();
 			System.exit(0);
 		});
 		
@@ -211,7 +194,7 @@ public class TrayMenu extends JFrame{
 	
 	final static String LOOKANDFEEL="Metal";
 	
-	private void trayClicked(MouseEvent e){
+	public void trayClicked(MouseEvent e){
 		Rectangle bonds=GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		setLocation(bonds.width-getWidth(), bonds.height-getHeight());
 		setVisible(true);
