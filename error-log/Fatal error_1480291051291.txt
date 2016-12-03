@@ -1,12 +1,15 @@
 Error in: Thread-2
 ==========================================
 
-java.lang.NullPointerException
-	at lapissea.clipp.rednerers.BufferedImageRenderer.render(BufferedImageRenderer.java:28)
-	at lapissea.clipp.Button.draw(Button.java:62)
-	at lapissea.clipp.Gui.lambda$0(Gui.java:179)
+java.lang.IllegalArgumentException: Color parameter outside of expected range: Red Green Blue
+	at java.awt.Color.testColorValueRange(Color.java:310)
+	at java.awt.Color.<init>(Color.java:395)
+	at java.awt.Color.<init>(Color.java:490)
+	at lapissea.clipp.rednerers.StringRenderer.render(StringRenderer.java:37)
+	at lapissea.clipp.Button.draw(Button.java:61)
+	at lapissea.clipp.Gui.lambda$0(Gui.java:216)
 	at java.util.ArrayList.forEach(ArrayList.java:1249)
-	at lapissea.clipp.Gui.paint(Gui.java:177)
+	at lapissea.clipp.Gui.paint(Gui.java:214)
 	at sun.awt.windows.WComponentPeer.paint(WComponentPeer.java:240)
 	at sun.awt.windows.WCanvasPeer.paint(WCanvasPeer.java:82)
 	at sun.awt.windows.WPanelPeer.paint(WPanelPeer.java:38)
@@ -19,8 +22,8 @@ java.lang.NullPointerException
 	at sun.awt.windows.WWindowPeer.setOpacity(WWindowPeer.java:681)
 	at java.awt.Window.setOpacity(Window.java:3632)
 	at java.awt.Frame.setOpacity(Frame.java:962)
-	at lapissea.clipp.Gui.render(Gui.java:189)
-	at lapissea.clipp.Handler$1.run(Handler.java:60)
+	at lapissea.clipp.Gui.render(Gui.java:226)
+	at lapissea.clipp.Handler$1.run(Handler.java:68)
 	at java.lang.Thread.run(Thread.java:745)
 
 ==========================================

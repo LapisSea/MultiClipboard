@@ -1,0 +1,5 @@
+Launching at:C:\Users\LapisSea PC\Programming\Java\FastFolderUtil\MultiClippboard\compiled
+java.lang.IllegalStateException: cannot open system clipboard
+java.lang.IllegalStateException: cannot open system clipboard
+java.lang.IllegalStateException: cannot open system clipboard
+java.lang.IllegalStateException: cannot open system clipboard

@@ -1,23 +1,27 @@
 package lapissea.clipp;
 
-import java.awt.Component;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.URI;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,31 +36,33 @@ import javax.swing.border.TitledBorder;
 public class TrayMenu extends JFrame{
 	
 	
-	public TrayMenu(Handler handler, TrayIconHandler iconHandler){
+	public TrayMenu(Handler handler, TrayIconHandler iconHandler) throws Exception{
+		super("Multi-clipboard settings");
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		setLayout(new FlowLayout());
-		setSize(445, 374);
+		getContentPane().setLayout(new FlowLayout());
+		setSize(470, 258);
 		
-		try{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}catch(Exception e){
-			throw new RuntimeException(e);
-		}
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		
 		setType(Type.POPUP);
 		setIconImage(Gui.icon);
 		JToggleButton ross=new JToggleButton("Run on system start");
-		add(ross);
+		getContentPane().add(ross);
 		ross.addActionListener(e->{
-			
-			String path=getJarPath();
+			File startup=new File(System.getProperty("java.io.tmpdir").replace("Local\\Temp\\", "Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")+"\\MultiClip.vbs");
+			if(!ross.isSelected()){
+				startup.delete();
+				return;
+			}
+			String path=Handler.getJarPath();
 			if(path.endsWith(".jar")){
-				String batContent="@javaw -jar "+path;
-				File startup=new File(System.getProperty("java.io.tmpdir").replace("Local\\Temp\\", "Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")+"\\MultiClip.bat");
+				String slashN=System.getProperty("line.separator"),vbsContent=
+						  "Set WshShell = CreateObject(\"WScript.Shell\" )"+slashN
+						+ "WshShell.Run chr(34) & \""+new File(path)+"\" & Chr(34), 0"+slashN
+						+ "Set WshShell = Nothing";
 				try{
-					startup.createNewFile();
-					Files.write(startup.toPath(), batContent.getBytes());
-				}catch(IOException e1){
+					Files.write(startup.toPath(), vbsContent.getBytes());
+				}catch(Exception e1){
 					e1.printStackTrace();
 				}
 			}
@@ -64,7 +70,26 @@ public class TrayMenu extends JFrame{
 		});
 		ross.setSelected(handler.font.isBold());
 		
-		JPanel activationKeyWrapp=addGen(new JPanel());
+		JButton guiColor=new JButton("Gui color");
+		
+		getContentPane().add(guiColor);
+		
+		guiColor.addActionListener(new ActionListener(){
+			
+			@Override
+			public void actionPerformed(ActionEvent e){
+				Color c=JColorChooser.showDialog(TrayMenu.this, "Select a gui color",handler.colorTheme);
+				if(c!=null){
+					handler.colorTheme=c;
+					handler.fontColor=(c.getGreen()+c.getGreen()+c.getBlue())/256F>2?Color.BLACK:Color.WHITE;
+				}
+			}
+		});
+		
+		
+		JPanel activationKeyWrapp=new JPanel();
+		
+		getContentPane().add(activationKeyWrapp);
 		
 		activationKeyWrapp.add(new JLabel("Activation key: "));
 		JTextField activationKey=new JTextField();
@@ -86,10 +111,11 @@ public class TrayMenu extends JFrame{
 		});
 		activationKey.setText(handler.activationKey);
 		
+		
 		JPanel guiLook=new JPanel();
 		guiLook.setBorder(new TitledBorder(null, "GUI look: ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		guiLook.setLayout(new BoxLayout(guiLook, BoxLayout.Y_AXIS));
-		add(guiLook);
+		getContentPane().add(guiLook);
 		
 		JPanel scrollTimWrap=new JPanel();
 		guiLook.add(scrollTimWrap);
@@ -123,7 +149,7 @@ public class TrayMenu extends JFrame{
 		
 		JPanel usageOptions=new JPanel();
 		usageOptions.setBorder(new TitledBorder(null, "Usage Options:", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		add(usageOptions);
+		getContentPane().add(usageOptions);
 		usageOptions.setLayout(new BoxLayout(usageOptions, BoxLayout.Y_AXIS));
 		
 		JPanel p1=new JPanel();
@@ -148,9 +174,28 @@ public class TrayMenu extends JFrame{
 		alwaysOnTop.addChangeListener(e->handler.alwaysOnTop=alwaysOnTop.isSelected());
 		alwaysOnTop.setSelected(handler.alwaysOnTop);
 		
+		URI uri = new URI("http://lapissea.byethost8.com/");
+		
+		JLabel link = new JLabel("<html>Made by <font color=#000099><u>LapisSea</u></font>");
+		link.addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseClicked(MouseEvent e){
+				if(Desktop.isDesktopSupported()){
+					try{
+						Desktop.getDesktop().browse(uri);
+					}catch(IOException e1){
+						throw new RuntimeException(e1);
+					}
+				}
+			}
+		});
+		link.setToolTipText(uri.toString());
+		link.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		getContentPane().add(link);
 		
 		JPanel panel_3=new JPanel();
-		add(panel_3);
+		getContentPane().add(panel_3);
 		panel_3.setLayout(new FlowLayout());
 		JButton kill=new JButton("Shut down Lapis-multi-clipboard");
 		panel_3.add(kill);
@@ -161,53 +206,26 @@ public class TrayMenu extends JFrame{
 		
 		JButton restartAndApply=new JButton("Restart and apply");
 		panel_3.add(restartAndApply);
+		
 		restartAndApply.addActionListener(e->{
 			try{
 				handler.writeConfig();
-				String path=getJarPath();
-				if(!path.endsWith(".jar")){
-					System.out.println("Start again");
-					System.exit(0);
-					return;
-				}
-				List<String> command=new ArrayList<>();
-				command.add("javaw");
-				command.add("-jar");
-				command.add(path);
-				
-				final ProcessBuilder builder=new ProcessBuilder(command);
-				builder.start();
 			}catch(Exception e1){
 				throw new RuntimeException(e1);
 			}
-			System.exit(0);
+			Handler.restart();
 		});
 		
 		setPreferredSize(new Dimension(470, 235));
 		pack();
+		setResizable(false);
 	}
 	
-	public <T extends Component> T addGen(T comp){
-		super.add(comp);
-		return comp;
-	}
 	
-	final static String LOOKANDFEEL="Metal";
 	
 	public void trayClicked(MouseEvent e){
 		Rectangle bonds=GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		setLocation(bonds.width-getWidth(), bonds.height-getHeight());
 		setVisible(true);
-	}
-	
-	private String getJarPath(){
-		String path;
-		try{
-			path=Handler.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-		}catch(URISyntaxException e){
-			throw new RuntimeException(e);
-		}
-		if(path.startsWith("/")||path.startsWith("\\")) path=path.substring(1);
-		return path;
 	}
 }

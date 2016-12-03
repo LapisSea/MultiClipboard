@@ -12,8 +12,11 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 import javax.swing.JFrame;
 
@@ -27,8 +30,35 @@ public class Gui extends JFrame{
 	public final Handler handler;
 	private List<Button> buttons=new ArrayList<>();
 	private int selectedId=-1,lastSelectedId=-2;
+	public Color bColor;
 	
-	public static final Image icon=Toolkit.getDefaultToolkit().getImage("data/Icon.png");
+	static{
+		File icon=new File("data/Icon.png"),iconMini=new File("data/IconMini.png");
+		try{
+			if(!icon.exists()){
+				ZipFile jar=new ZipFile(new File(Handler.getJarPath()));
+				Files.copy(jar.getInputStream(jar.getEntry("Icon.png")), icon.toPath());
+				
+				if(!iconMini.exists()){
+					Files.copy(jar.getInputStream(jar.getEntry("IconMini.png")), iconMini.toPath());
+					Handler.restart();
+				}
+				
+				jar.close();
+				Handler.restart();
+			}else if(!iconMini.exists()){
+				ZipFile jar=new ZipFile(new File(Handler.getJarPath()));
+				Files.copy(jar.getInputStream(jar.getEntry("IconMini.png")), iconMini.toPath());
+				
+				jar.close();
+				Handler.restart();
+			}
+		}catch(Exception e){
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static final Image icon=Toolkit.getDefaultToolkit().getImage("data/Icon.png"),iconMini=Toolkit.getDefaultToolkit().getImage("data/IconMini.png");
 	
 	public Gui(Handler handler){
 		this.handler=handler;
@@ -157,16 +187,23 @@ public class Gui extends JFrame{
 		g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		g.setFont(handler.font);
 		
+		Color c=handler.colorTheme;
 		
 		double d=(openningTransition-System.currentTimeMillis())/200;
 		if(d<=0)d=0;
 		else markDirty();
 		g.translate(0, d*d*30);
 		g.scale(1-d*0.1, 1-d*0.1);
-		g.setColor(new Color(30,100,255,150));
+		g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),150));
 		g.fillRect(1, 1, getWidth()-1, getHeight()-21);
 		
-		g.setColor(new Color(0,150,255));
+		bColor=new Color(
+						c.getRed  ()+(c.getRed  ()+30>255?-1:1)*30,
+						c.getGreen()+(c.getGreen()+30>255?-1:1)*30,
+						c.getBlue ()+(c.getBlue ()+30>255?-1:1)*30
+						);
+		g.setColor(bColor);
+		
 		g.drawRect(0, 0, getWidth()-1, getHeight()-20);
 		
 		Rectangle r=new Rectangle(1, 1, getWidth()-1, getHeight()-21);

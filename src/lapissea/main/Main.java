@@ -14,7 +14,18 @@ import lapissea.clipp.Handler;
 public class Main{
 	
 	@SuppressWarnings("resource")
-	public static void main(String[] args){
+	public static void main(String[] args) throws Exception{
+		String path=Handler.getJarPath();
+		if(path.endsWith(".jar")){
+			System.setProperty("user.dir", path.substring(0,path.lastIndexOf("/")));
+			new File("data").mkdirs();
+			
+			File logFile=new File("data/LastLog.txt");
+			logFile.createNewFile();
+			System.setOut(new PrintStream(logFile));
+			System.setErr(new PrintStream(logFile));
+		}
+		
 		try{
 			File f=new File("MultiClip.lock");
 			f.deleteOnExit();
@@ -70,6 +81,8 @@ public class Main{
 			}
 			
 		});
+		
+		System.out.println("Launching at:"+new File("").getAbsolutePath());
 		new Handler();
 	}
 }

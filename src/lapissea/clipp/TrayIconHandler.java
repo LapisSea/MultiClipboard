@@ -1,7 +1,6 @@
 package lapissea.clipp;
 
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -13,10 +12,10 @@ public class TrayIconHandler extends TrayIcon implements MouseListener{
 	private Handler				handler;
 	
 	public TrayIconHandler(Handler handler){
-		super(Toolkit.getDefaultToolkit().getImage("data/Icon2.png"), "Lapis Multi-clipboard");
+		super(Gui.iconMini, "Lapis Multi-clipboard");
 		this.handler=handler;
 		
-		if(!SystemTray.isSupported()) throw new IllegalStateException("Your pc does not support tray icons!");
+		if(!SystemTray.isSupported())throw new IllegalStateException("Your pc does not support tray icons!");
 		
 		try{
 			addMouseListener(this);
@@ -32,7 +31,11 @@ public class TrayIconHandler extends TrayIcon implements MouseListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e){
-		if(menu==null) menu=new TrayMenu(handler, this);
+		if(menu==null)try{
+			menu=new TrayMenu(handler, this);
+		}catch(Exception e1){
+			throw new RuntimeException(e1);
+		}
 		menu.trayClicked(e);
 	}
 	

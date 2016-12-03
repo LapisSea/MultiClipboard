@@ -1,10 +1,11 @@
 {
-    "activation-key": "Y+Ctrl+Shift",
+    "activation-key": "X+Ctrl+Shift",
     "always-on-top": true,
     "button-number": 3,
+    "color-HEX": -16724788,
     "font": {
         "is-bold": true,
-        "size": 13
+        "size": 14
     },
     "scroll-time (ms)": 1000,
     "switch-mode": true

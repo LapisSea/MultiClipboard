@@ -1,6 +1,5 @@
 package lapissea.clipp;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -28,7 +27,7 @@ public class Button{
 		if(obj instanceof String) renderer=new StringRenderer(this.gui, (String)obj);
 		else if(obj instanceof BufferedImage) renderer=new BufferedImageRenderer(this.gui, (BufferedImage)obj);
 		else if(obj instanceof List) renderer=new FileListRenderer(this.gui, (List<File>)obj);
-		else renderer=new BlankRenderer();
+		else renderer=new BlankRenderer(gui);
 	};
 	
 	public Button(Gui gui, Slot slot, int id){
@@ -64,7 +63,7 @@ public class Button{
 		g.setClip(null);
 		g.setTransform(mat2);
 		
-		g.setColor(new Color(0, 150, 255));
+		g.setColor(gui.bColor);
 		g.drawRect(0, 0, width, height);
 		
 		g.setTransform(mat);

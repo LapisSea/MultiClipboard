@@ -1,9 +1,11 @@
 package lapissea.clipp;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -11,6 +13,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,10 +37,12 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	public List<Slot>			slots				=new ArrayList<>();
 	public ClipBoardListener	clipBoardListener	=null;
 	protected boolean			ignoreNext			=false;
-	public int					buttonNumber		=0;
+	public int					buttonNumber		=3;
 	public double				scrollTime			=1000;
-	public Font					font				=null;
-	public boolean				switchMode			=false,alwaysOnTop;
+	public Font					font				=new Font(Font.MONOSPACED, Font.BOLD, 14);
+	public boolean				switchMode			=false,alwaysOnTop=true;
+	public Color				colorTheme			=new Color(30,100,255);
+	public Color				fontColor			=Color.WHITE;
 	
 	private final Runnable renderRun=new Runnable(){
 		
@@ -72,12 +77,10 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	};
 	
 	public Handler(){
-		
 		try{
 			try{
 				readConfig();
 			}catch(Exception e){
-				e.printStackTrace();
 				writeConfig();
 				readConfig();
 			}
@@ -128,8 +131,6 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	
 	public void writeConfig() throws Exception{
 		new File("data").mkdir();
-		File file=new File("data/Multi_copy_config.json");
-		file.createNewFile();
 		
 		JSONObject config=new JSONObject();
 		
@@ -144,8 +145,9 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 		config.put("scroll-time (ms)", scrollTime);
 		config.put("switch-mode", switchMode);
 		config.put("always-on-top", alwaysOnTop);
+		config.put("color-HEX", colorTheme.getRGB());
 		
-		Files.write(file.toPath(), config.toString(4).getBytes());
+		Files.write(new File("data/Multi_copy_config.json").toPath(), config.toString(4).getBytes());
 	}
 	
 	private void readConfig() throws Exception{
@@ -158,6 +160,8 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 		scrollTime=config.getInt("scroll-time (ms)");
 		switchMode=config.getBoolean("switch-mode");
 		alwaysOnTop=config.getBoolean("always-on-top");
+		colorTheme=new Color(config.getInt("color-HEX"));
+		fontColor=(colorTheme.getGreen()+colorTheme.getGreen()+colorTheme.getBlue())/256F>2?Color.BLACK:Color.WHITE;
 	}
 	
 	private String eventToString(GlobalKeyEvent event){
@@ -196,7 +200,8 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	
 	@Override
 	public void keyReleased(GlobalKeyEvent event){
-		if(event.isControlPressed()&&((char)event.getVirtualKeyCode())=='C'){
+		char c=Character.toUpperCase((char)event.getVirtualKeyCode());
+		if(event.isControlPressed()&&(c=='C'||c=='X')){
 			clipBoardListener.call();
 		}
 		if(switchMode)return;
@@ -208,17 +213,23 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	
 	@SuppressWarnings("unchecked")
 	public void paste(){
-		Object obj=slots.get(selectedSlot);
+		Object obj=slots.get(selectedSlot).getActive();
 		if(obj!=null){
 			ignoreNext=true;
 			Transferable clip=null;
-			if(obj instanceof String)clip=new StringSelection((String)obj);
+			Clipboard cb=Toolkit.getDefaultToolkit().getSystemClipboard();
+			if(obj instanceof String){
+				StringSelection ss=new StringSelection((String)obj);
+				cb.setContents(ss, ss);
+				return;
+			}
 			else if(obj instanceof List)clip=new TransferableFileList((List<File>)obj);
 			else if(obj instanceof Image)clip=new TransferableImage((Image)obj);
 			
-			if(clip!=null) Toolkit.getDefaultToolkit().getSystemClipboard().setContents(clip, (a, b)->{});
+			if(clip!=null) cb.setContents(clip, null);
 		}
 	}
+	
 	
 	private class TransferableFileList implements Transferable{
 		
@@ -312,5 +323,36 @@ public class Handler implements GlobalKeyListener,GlobalMouseListener{
 	
 	private void updatePos(GlobalMouseEvent event){
 		mousePos.setLocation(event.getX(), event.getY());
+	}
+
+	public static String getJarPath(){
+		String path;
+		try{
+			path=Handler.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+		}catch(URISyntaxException e){
+			throw new RuntimeException(e);
+		}
+		if(path.startsWith("/")||path.startsWith("\\")) path=path.substring(1);
+		return path;
+	}
+	public static void restart(){
+		try{
+			String path=Handler.getJarPath();
+			if(!path.endsWith(".jar")){
+				System.out.println("Start again");
+				System.exit(0);
+				return;
+			}
+			List<String> command=new ArrayList<>();
+			command.add("javaw");
+			command.add("-jar");
+			command.add(path);
+			
+			final ProcessBuilder builder=new ProcessBuilder(command);
+			builder.start();
+		}catch(Exception e1){
+			throw new RuntimeException(e1);
+		}
+		System.exit(0);
 	}
 }

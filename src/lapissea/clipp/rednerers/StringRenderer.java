@@ -28,11 +28,17 @@ public class StringRenderer implements Renderable{
 		if(lines==null) update(g, width, height);
 		
 		if(!noBG){
-			g.setColor(new Color(0.3F-highlight*0.3F, 0.3F-highlight*0.3F, 1, 0.4F));
+			Color c=gui.handler.colorTheme;
+			
+			float re=c.getRed()/256F;
+			float gr=c.getGreen()/256F;
+			float bl=c.getBlue()/256F;
+			
+			g.setColor(new Color(re+(re>0.3?-1:0)*highlight*0.3F, gr+(gr>0.3?-1:0)*highlight*0.3F, bl+(bl>0.3?-1:0)*highlight*0.3F, 0.4F));
 			g.fillRect(0, 0, width, height);
 		}
 		
-		g.setColor(Color.WHITE);
+		g.setColor(gui.handler.fontColor);
 		
 		double pos=0;
 		int textHeight=lines.size()*(gui.handler.font.getSize()+1);
